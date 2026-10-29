@@ -20,24 +20,6 @@
 
 
 
-function afficherStatut(statut) {
-    switch (statut) {
-        case "envoyee":
-            return "Candidature envoyée.";
-
-        case "entretien":
-            return "Entretien prévu.";
-
-        case "refus":
-            return "Candidature refusée.";
-
-        case "accepte":
-            return "Candidature acceptée !";
-
-        default:
-            return "Statut inconnu.";
-    }
-}
 
 
 const aujourdHui = new Date(); // recup date et heure actuelles
@@ -47,3 +29,12 @@ for (let i = 0; i < 10; i++) {
 
     console.log(aujourdHui.toLocaleDateString("fr-FR"));
 }
+
+export function ajouterJours(date, n) {
+  const resultat = new Date(date);              // copie, pour ne pas modifier l'original
+  resultat.setDate(resultat.getDate() + n);     // gère tout seul les changements de mois
+  return resultat;
+}
+
+const envoi = new Date(2026, 10, 28);           // 28 novembre 2026 (novembre = 10)
+const relance = ajouterJours(envoi, 7);
