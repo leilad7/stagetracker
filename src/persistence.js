@@ -8,16 +8,16 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 
 
-async function sauvegarder (candidatures) {
+export async function sauvegarder (candidatures) {
     const candiStr=JSON.stringify(candidatures);
     await mkdir("data", {recursive: true});
     await writeFile("data/candidatures.json", candiStr);
     
 }
 
-async function charger(){
+export async function charger(){
     try{
-        const texte=await readFile("data/candidatures.json");
+        const texte=await readFile('data/candidatures.json', 'utf8');
         return JSON.parse(texte);
     }
     catch(erreur){return [];}
