@@ -10,7 +10,7 @@ export function prochainId(liste) {
     if (liste.length === 0) {
         return 1;
     }
-    return Math.max(...liste.map(c => c.id)) + 1;
+    return Math.max(...liste.map(c => c.id)) + 1; // les 3 points décomposent le tableau
 }
 
 export function creerCandidature(id, entreprise, dateEnvoi = null, statut = "a_contacter") {
@@ -27,19 +27,25 @@ export function creerCandidature(id, entreprise, dateEnvoi = null, statut = "a_c
 }
 
 export function ajouter(liste, candidature) {
-    return [...liste, candidature];
+    liste.push(candidature);
+    return liste;
 }
 
 export function supprimer(liste, id) {
     return liste.filter(c => c.id !== id);
 }
 
-export function changerStatut(liste, id, nouveauStatut) {
+export function changerStatut(liste, idSaisi, nouveauStatut) {
     if (!STATUTS.includes(nouveauStatut)) {
-        return liste;
+        throw new Error(`statut inconnu : veuillez en prendre un dans la iste suivante : ${STATUTS}`);
     }
-    return liste.map(c => (c.id === id ? { ...c, statut: nouveauStatut } : c));
-}
+
+    if(!liste.find(c=> c.id===idSaisi)){
+        throw new Error(`id inconnu :${idSaisi}`);
+    }
+
+    let nvlListe = liste.map(c => c.id === idSaisi ? {...c, statut: nouveauStatut} : c);
+    return nvlListe;}
 
 export function parStatut(liste, s) {
     return liste.filter(c => c.statut === s);
@@ -51,7 +57,15 @@ export function aRelancer(liste) {
         .filter(c => c.statut === "envoyee" && c.dateRelance !== null && c.dateRelance <= ajd)
         .sort((a, b) => a.dateRelance.localeCompare(b.dateRelance));
 }
+export function statutARelancer(liste) {
+    let ajd = new Date();
 
+    for (let i = 0; i < liste.length; i++) {
+        if (liste[i].dateEnvoi != null && ajd >= liste[i].dateRelance) {
+            liste[i].statut = "à_relancer";
+        }
+    }
+}
 export function compterParStatut(liste) {
     let resultat = {};
     for (let i = 0; i < STATUTS.length; i++) {

@@ -4,5 +4,8 @@ export function ajouterJours(date, n) {
   return resultat;
 }
 
-const envoi = new Date(2026, 10, 28);           // 28 novembre 2026 (novembre = 10)
-const relance = ajouterJours(envoi, 7);
+export function ajouterMois(date, n) {
+  const resultat = new Date(date);              
+  resultat.setMonth(resultat.getMonth() + n);     
+  return resultat;
+}
