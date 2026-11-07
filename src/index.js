@@ -5,7 +5,5 @@ import {prochainId, creerCandidature, ajouter, changerStatut,
 import { chercherEntreprise } from "./api.js";
 
 let liste= await charger();
-liste = supprimer(liste, 5);// czr filter fait une nvl liste
-
 console.log(liste);
 await sauvegarder(liste);
