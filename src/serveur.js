@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { charger } from "./persistence.js";
+import { charger, sauvegarder } from "./persistence.js";
 import {
     prochainId, creerCandidature, ajouter, changerStatut,
     compterParStatut, aRelancer, resume, supprimer, parStatut
@@ -18,19 +18,38 @@ const serveur = createServer(async (req, res) => {
     console.log("requête reçue :", req.method, req.url);
    
     let donnees;
+    let code = 200;
 
     if (url.pathname === "/candidatures/a-relancer") {
         donnees = aRelancer(liste);
     }
      else if (req.method === "POST" && url.pathname === "/candidatures") {
+        try{
     let texte = "";
     console.log("POST reçu");
     for await (const morceau of req) {
     texte += morceau;}
     const corps=JSON.parse(texte);
-    donnees=corps;
-    }
+
     
+    if (corps.dateEnvoi){
+        const date = new Date(corps.dateEnvoi);
+        if (isNaN(date)) {
+                throw new Error("date invalide, format attendu : AAAA-MM-JJ");}
+        corps.dateEnvoi=date;
+    }
+    let id=prochainId(liste);
+    const nvlCandi=creerCandidature(id,corps.entreprise, corps.dateEnvoi, corps.statut);
+    ajouter(liste, nvlCandi);
+    await sauvegarder(liste);
+    donnees=nvlCandi;
+    code = 201;
+
+    }
+     catch (erreur){
+        code=400;
+        donnees={erreur: erreur.message};
+     }    }
 
     else if (url.pathname === "/candidatures" && url.searchParams.has("status")) {
         let statut = url.searchParams.get("status");
@@ -45,7 +64,7 @@ const serveur = createServer(async (req, res) => {
         donnees = { "erreur": "route inconnue" };
     }
 
-    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+    res.writeHead(code, { "Content-Type": "application/json; charset=utf-8" });
     res.end(JSON.stringify(donnees));
 });
 
