@@ -34,6 +34,5 @@ Pour le moment, il faut juste Node. j'utilise la version v24.22.1
     git clone https://github.com/leilad7/stagetracker
     cd stagetracker
     npm install
-    [créer la base + variables d'environnement]
     npm run dev
 
